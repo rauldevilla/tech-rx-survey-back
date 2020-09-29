@@ -9,7 +9,7 @@ check_if_function_exists()
     } || {
         exit_status=0
     }
-    echo ${exit_status=1}
+    echo ${exit_status1}
 }
 
 create_function()

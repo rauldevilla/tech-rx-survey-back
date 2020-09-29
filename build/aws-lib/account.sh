@@ -4,7 +4,7 @@ get_account_id()
 {
     main_organizacion_name=$1
     result=`aws organizations list-accounts`
-    organization_information=$( echo ${result} | jq -r ".Accounts[] | select(.Name == \"$main_organizacion_name\")" )
+    organization_information=$( { echo ${result} | jq -r ".Accounts[] | select(.Name == \"$main_organizacion_name\")"; } 2>&1 )
     id=$( echo ${organization_information} | jq -r .Id )
     echo ${id}
 }
