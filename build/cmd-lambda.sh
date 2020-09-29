@@ -25,10 +25,15 @@ update_proxy_function()
 
 create_proxy_function()
 {
-    result=$( create_function "${FUNCTION_NAME}" "${FUNCTION_RUNTIME}" "${FUNCTION_ZIP_FILE}" "${FUNCTION_HANDLER}" "${FUNCTION_ROLE}" )
-    if [ "${result}" == "" ]; then
-        info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}"."
+    result=$( check_if_function_exists "${FUNCTION_NAME}" )
+    if [ "${result}" == "1" ]; then
+        warn_message "Function "${FUNCTION_NAME}" already exists."
     else
-        error_message "Error creating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}". ${result}"
+        result=$( create_function "${FUNCTION_NAME}" "${FUNCTION_RUNTIME}" "${FUNCTION_ZIP_FILE}" "${FUNCTION_HANDLER}" "${FUNCTION_ROLE}" )
+        if [ "${result}" == "" ]; then
+            info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}"."
+        else
+            error_message "Error creating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}". ${result}"
+        fi
     fi
 }
