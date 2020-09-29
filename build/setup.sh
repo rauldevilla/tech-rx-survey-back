@@ -78,7 +78,3 @@ init()
         mkdir -p ${PACKAGE_DIR}
     fi
 }
-
-init
-
-

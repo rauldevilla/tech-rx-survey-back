@@ -2,43 +2,33 @@
 
 source setup.sh
 source aws-lib/lambda.sh
+source aws-lib/account.sh
+
+AWS_ACCOUNT_ID=$( get_account_id "Tech And Solve" )
 
 FUNCTION_NAME="rxsurvey-proxy"
 FUNCTION_HANDLER="handler"
 FUNCTION_RUNTIME="nodejs12.x"
 FUNCTION_ZIP_FILE="fileb://${BASE_DIR}/out/package/package-lambda.zip"
-
-#FUNCTION_ROLE="arn:aws:iam::123456789012:role/lambda-dynamodb-role"
-
-#create_proxy_lambda_function()
-#{
-#
-#
-#
-#
-#
-#   {
-#        output_message=$( {
-#                    aws lambda create-function \
-#                    --function-name ${FUNCTION_NAME} \
-#                    --zip-file fileb://${LAMBDA_ZIP_FILE} \
-#                    --handler ${FUNCTION_HANDLER} \
-#                    --runtime ${FUNCTION_RUNTIME} \
-#                    --role ${FUNCTION_ROLE}; } 2>&1)
-#
-#        info_message "Lambda function ${FUNCTION_NAME} created."
-#   } || {
-#       error_message "Error creating lambda function ${FUNCTION_NAME}.  ${output_message}"
-#   }
-#}
-#
+FUNCTION_ROLE="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${LAMDA_ROLE_NAME}"
 
 update_proxy_function()
 {
-    {
-        result=$( update_function_code "${FUNCTION_NAME}" "${FUNCTION_ZIP_FILE}")
+    result=$( update_function_code "${FUNCTION_NAME}" "${FUNCTION_ZIP_FILE}" )
+    revision_id=$( echo ${result} | jq -r .RevisionId )
+    if [ "${revision_id}" != "" ]; then
+        info_message "Function "${FUNCTION_NAME}" updated using file "${FUNCTION_ZIP_FILE}".  [${revision_id}] Result ${result}"
+    else
+        error_message "Error updating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}". ${result}"
+    fi
+}
+
+create_proxy_function()
+{
+    result=$( create_function "${FUNCTION_NAME}" "${FUNCTION_RUNTIME}" "${FUNCTION_ZIP_FILE}" "${FUNCTION_HANDLER}" "${FUNCTION_ROLE}" )
+    if [ "${result}" == "" ]; then
         info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}"."
-    } || {
-        error_message "Error updating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}".  ${result}"
-    }
+    else
+        error_message "Error creating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}". ${result}"
+    fi
 }

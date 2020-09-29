@@ -37,9 +37,10 @@ show_options()
 read_option()
 {
     local choice
-    read -p "Enter option [ 1 - 5 ]: " choice
+    read -p "Enter option: " choice
     case ${choice} in
          1) echo "" & update_proxy_function ;;
+         3) echo "" & create_proxy_function ;;
         10) echo "" & show_config ;;
         99) clear; ACTIVE=false ;;
         *) echo -e "${RED} Ivalid input${STD}" & sleep 1
@@ -48,8 +49,9 @@ read_option()
 
 main() 
 {
-    clear & sleep 2
+    clear & sleep 1
     show_head
+    init
 
     #trap '' SIGINT SIGQUIT SIGTSTP
 

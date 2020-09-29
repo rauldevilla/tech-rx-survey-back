@@ -19,14 +19,16 @@ create_function()
     function_zip_file=$3
     function_handler=$4
     function_role=$5
-    result=$( aws lambda create-function --function-name ${function_name} --runtime ${function_runtime} --zip-file ${function_zip_file} --handler ${function_handler} --role ${function_role} )
+    result=$( { aws lambda create-function --function-name ${function_name} --runtime ${function_runtime} --zip-file ${function_zip_file} --handler ${function_handler} --role ${function_role} ; } 2>&1 )
+    echo "${result}"
 }
 
 update_function_code()
 {
     function_name=$1
     function_zip_file=$2
-    result=$( aws lambda update-function-code --function-name ${function_name} --zip-file ${function_zip_file} )
+    result=$( { aws lambda update-function-code --function-name ${function_name} --zip-file ${function_zip_file} ; } 2>&1 )
+    echo "${result}"
 }
 
 test_create_function()
