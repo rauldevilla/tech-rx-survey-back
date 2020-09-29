@@ -44,37 +44,6 @@ attach_dynamodb_role_policy()
     }
 }
 
-do_delete_for_role()
-{
-    {
-        result=$( dettach_policy_from_role "${LAMDA_ROLE_NAME}" "${LAMBDA_ROLE_POLICY_ARN}" )
-        info_message "Policy \"${LAMBDA_ROLE_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\"."
-    }  || {
-        error_message "Error detaching policy \"${LAMBDA_ROLE_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\". ${result}"
-    }
-
-    {
-        result=$( dettach_policy_from_role "${LAMDA_ROLE_NAME}" "${DYNAMODB_POLICY_ARN}" )
-        info_message "Policy \"${DYNAMODB_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\"."
-    }  || {
-        error_message "Error detaching policy \"${DYNAMODB_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\". ${result}"
-    }
-
-    {
-        result=$( delete_policy "${DYNAMODB_POLICY_ARN}" )
-        info_message "Policy \"${DYNAMODB_POLICY_ARN}\" deleted"
-    } || {
-        error_message "Error deleting polici \"${DYNAMODB_POLICY_ARN}\". ${result}"
-    }
-
-    {
-        result=$( delete_role "${LAMDA_ROLE_NAME}" )
-        info_message "Role Deleted."
-    } || {
-        error_message "Error deleting role \"${LAMDA_ROLE_NAME}\". ${result}"
-    }
-}
-
 create_lambda_execution_role()
 {
     {
@@ -104,34 +73,3 @@ attach_dynamodb_policy_to_lambda_role()
         error_message "Error attaching policy ${LAMBDA_ROLE_POLICY_ARN} to role ${LAMDA_ROLE_NAME}.  ${result}"
     }
 }
-
-main_for_role()
-{
-    result=$( check_if_lambda_role_exists )
-
-    if [ "${result}" == "1" ]; then
-        info_message "Role ${LAMDA_ROLE_NAME} ALREADY exists"
-    else
-        warn_message "Role ${LAMDA_ROLE_NAME} does NOT exists"
-        create_lambda_execution_role
-        attach_execution_policy_to_lambda_role
-    fi
-
-    result=$( check_if_dynamodb_policy_exists )
-    if [ "${result}" == "1" ]; then
-        info_message "Policy ${DYNAMODB_POLICY_NAME} ALREADY exists"
-    else
-        create_dynamodb_policy
-        attach_dynamodb_policy_to_lambda_role
-    fi
-
-}
-
-#RUN
-case "$1" in
-    "create") main_for_role;;
-    "delete") do_delete_for_role;;
-    *) "\"$1\" is not a valid option"
-esac
-
-

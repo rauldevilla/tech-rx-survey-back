@@ -2,9 +2,69 @@
 
 source setup.sh
 source cmd-lambda.sh
+source cmd-iam.sh
 source package.sh
 
 ACTIVE=true
+
+package_and_create_function()
+{
+    clear_lambda_function_package
+    create_lambda_function_package
+    create_proxy_function
+}
+
+create_iam_structure() 
+{
+    result=$( check_if_lambda_role_exists )
+
+    if [ "${result}" == "1" ]; then
+        info_message "Role ${LAMDA_ROLE_NAME} ALREADY exists"
+    else
+        warn_message "Role ${LAMDA_ROLE_NAME} does NOT exists"
+        create_lambda_execution_role
+        attach_execution_policy_to_lambda_role
+    fi
+
+    result=$( check_if_dynamodb_policy_exists )
+    if [ "${result}" == "1" ]; then
+        info_message "Policy ${DYNAMODB_POLICY_NAME} ALREADY exists"
+    else
+        create_dynamodb_policy
+        attach_dynamodb_policy_to_lambda_role
+    fi
+}
+
+delete_iam_structure()
+{
+    {
+        result=$( dettach_policy_from_role "${LAMDA_ROLE_NAME}" "${LAMBDA_ROLE_POLICY_ARN}" )
+        info_message "Policy \"${LAMBDA_ROLE_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\"."
+    }  || {
+        error_message "Error detaching policy \"${LAMBDA_ROLE_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\". ${result}"
+    }
+
+    {
+        result=$( dettach_policy_from_role "${LAMDA_ROLE_NAME}" "${DYNAMODB_POLICY_ARN}" )
+        info_message "Policy \"${DYNAMODB_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\"."
+    }  || {
+        error_message "Error detaching policy \"${DYNAMODB_POLICY_ARN}\" deteched from rol \"${LAMDA_ROLE_NAME}\". ${result}"
+    }
+
+    {
+        result=$( delete_policy "${DYNAMODB_POLICY_ARN}" )
+        info_message "Policy \"${DYNAMODB_POLICY_ARN}\" deleted"
+    } || {
+        error_message "Error deleting polici \"${DYNAMODB_POLICY_ARN}\". ${result}"
+    }
+
+    {
+        result=$( delete_role "${LAMDA_ROLE_NAME}" )
+        info_message "Role \"${LAMDA_ROLE_NAME}\" Deleted."
+    } || {
+        error_message "Error deleting role \"${LAMDA_ROLE_NAME}\". ${result}"
+    }
+}
 
 show_head()
 {
@@ -35,20 +95,15 @@ show_options()
     echo ""
 }
 
-package_and_create_function()
-{
-    clear_lambda_function_package
-    create_lambda_function_package
-    create_proxy_function
-}
-
 read_option()
 {
     local choice
     read -p "Enter option: " choice
     case ${choice} in
          1) echo "" & update_proxy_function ;;
+         2) echo "" & create_iam_structure ;;
          3) echo "" & package_and_create_function ;;
+         4) echo "" & delete_iam_structure ;;
         10) echo "" & show_config ;;
         99) clear; ACTIVE=false ;;
         *) echo -e "${RED} Ivalid input${STD}" & sleep 1
