@@ -2,6 +2,7 @@
 
 source setup.sh
 source cmd-lambda.sh
+source package.sh
 
 ACTIVE=true
 
@@ -30,8 +31,15 @@ show_options()
     echo " 4. Delete IAM structure"
     echo " 5. Delete function"
     echo "10. Show config"
-    echo "99. EXIT"
+    echo "99. Exit"
     echo ""
+}
+
+package_and_create_function()
+{
+    clear_lambda_function_package
+    create_lambda_function_package
+    create_proxy_function
 }
 
 read_option()
@@ -40,7 +48,7 @@ read_option()
     read -p "Enter option: " choice
     case ${choice} in
          1) echo "" & update_proxy_function ;;
-         3) echo "" & create_proxy_function ;;
+         3) echo "" & package_and_create_function ;;
         10) echo "" & show_config ;;
         99) clear; ACTIVE=false ;;
         *) echo -e "${RED} Ivalid input${STD}" & sleep 1

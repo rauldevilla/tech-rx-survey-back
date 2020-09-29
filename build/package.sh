@@ -2,17 +2,23 @@
 
 source setup.sh
 
-SRC_DIR="../src"
+SRC_DIR="${BASE_DIR}/../src"
 
-clear()
+clear_lambda_function_package()
 {
     rm ${LAMBDA_ZIP_FILE}
 }
 
-pack()
+create_lambda_function_package()
 {
     cd ${SRC_DIR} && zip -v -r ${LAMBDA_ZIP_FILE} ./*
 }
 
-clear
-pack
+test_clear_and_package()
+{
+    clear_lambda_function_package
+    create_lambda_function_package
+}
+
+#TEST
+#test_clear_and_package
