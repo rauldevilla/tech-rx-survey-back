@@ -44,12 +44,12 @@ create_proxy_function()
 delete_proxy_function()
 {
     result=$( check_if_function_exists "${FUNCTION_NAME}" )
-    if [ "${result}" == "1" ]; then
+    if [ "${result}" != "" ]; then
         {
-            result=$( delete_function "${LAMDA_ROLE_NAME}" )
-            info_message "Function ${LAMDA_ROLE_NAME} deleted."
+            result=$( delete_function "${FUNCTION_NAME}" )
+            info_message "Function ${FUNCTION_NAME} deleted. ${result}"
         } || {
-            error_message "Error deleting function ${LAMDA_ROLE_NAME}.  ${result}"
+            error_message "Error deleting function ${FUNCTION_NAME}.  ${result}"
         }
     else
         warn_message "Function "${FUNCTION_NAME}" does NOT exist."
