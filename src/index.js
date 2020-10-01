@@ -1,10 +1,10 @@
 'use strict'
 
-module.exports.handler = (event) => {
+exports.handler = (event) => {
 
     return {
         statusCode: 201,
-        body: JSON.stringify("Ahi vamosssss\'")
+        body: JSON.stringify("Ahi vamosssss\'" + process.env.STAGE)
     }
 
 };

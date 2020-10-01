@@ -17,11 +17,22 @@ if [ "${STAGE}" == "" ]; then
     STAGE="DEV"
 fi
 
-package_and_create_function()
+create_proxy_function_package()
 {
     clear_lambda_function_package
     create_lambda_function_package
+}
+
+package_and_create_function()
+{
+    create_proxy_function_package
     create_proxy_function
+}
+
+package_and_update_function()
+{
+    create_proxy_function_package
+    update_proxy_function
 }
 
 create_iam_structure() 
@@ -112,7 +123,7 @@ read_option()
     local choice
     read -p "Enter option: " choice
     case ${choice} in
-         1) echo "" & update_proxy_function ;;
+         1) echo "" & package_and_update_function ;;
          2) echo "" & create_iam_structure ;;
          3) echo "" & package_and_create_function ;;
          4) echo "" & delete_iam_structure ;;
