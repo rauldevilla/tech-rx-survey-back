@@ -31,8 +31,17 @@ create_proxy_function()
     if [ "${result}" == "" ]; then
         result=$( create_function "${FUNCTION_NAME}" "${FUNCTION_RUNTIME}" "${FUNCTION_ZIP_FILE}" "${FUNCTION_HANDLER}" "${FUNCTION_ROLE}" )
         revision_id=$( echo ${result} | jq -r .RevisionId )
-        if [ "${result}" == "" ]; then
+        if [ "${result}" != "" ]; then
             info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}". [${revision_id}]."
+
+            env_vars="{STAGE=${STAGE}}"
+            result=$( add_env_variables_to_function "${FUNCTION_NAME}" "${env_vars}" )
+            if [ result != "" ]; then
+                info_message "Environment variables ${env_vars} added to "${FUNCTION_NAME}""
+            else
+                error_message "Error adding environment variables ${env_vars} to function "${FUNCTION_NAME}".  ${result}"
+            fi
+
         else
             error_message "Error creating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}". ${result}"
         fi

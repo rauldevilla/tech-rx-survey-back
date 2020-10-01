@@ -17,7 +17,8 @@ create_function()
     function_handler=$4
     function_role=$5
     result=$( { aws lambda create-function --function-name ${function_name} --runtime ${function_runtime} --zip-file ${function_zip_file} --handler ${function_handler} --role ${function_role} ; } 2>&1 )
-    echo "${result}"
+    function_arn=$( echo ${result} | jq -r .FunctionArn )
+    echo "${function_arn}"
 }
 
 update_function_code()
@@ -41,7 +42,8 @@ add_env_variables_to_function()
     env_variables_json_values=$2
     env_variables_parameter="Variables=${env_variables_json_values}"
     result=$( { aws lambda update-function-configuration --function-name ${function_name} --environment ${env_variables_parameter} ; } 2>&1 )
-    echo ${result}
+    revision_id=$( echo ${result} | jq -r .RevisionId )
+    echo ${revision_id}
 }
 
 test_create_function()
