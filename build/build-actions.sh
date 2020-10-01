@@ -95,6 +95,8 @@ show_options()
     echo "${APP_NAME} MENU OPTIONS"
     echo "-------------------------------"
     echo ""
+    echo "[[>> STAGE: \"${STAGE}\" <<]]"
+    echo ""
     echo " 1. Update function"
     echo " 2. Create IAM structure"
     echo " 3. Create function"
