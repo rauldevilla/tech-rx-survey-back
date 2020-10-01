@@ -1,11 +1,21 @@
 #!/bin/bash
 
-source setup.sh
-source cmd-lambda.sh
-source cmd-iam.sh
-source package.sh
+STAGE=$1
+if [ "${STAGE}" == "" ]; then
+    STAGE="DEV"
+fi
+
+source setup.sh ${STAGE}
+source cmd-lambda.sh ${STAGE}
+source cmd-iam.sh ${STAGE}
+source package.sh ${STAGE}
 
 ACTIVE=true
+
+STAGE=$1
+if [ "${STAGE}" == "" ]; then
+    STAGE="DEV"
+fi
 
 package_and_create_function()
 {
@@ -104,6 +114,7 @@ read_option()
          2) echo "" & create_iam_structure ;;
          3) echo "" & package_and_create_function ;;
          4) echo "" & delete_iam_structure ;;
+         5) echo "" & delete_proxy_function ;;
         10) echo "" & show_config ;;
         99) clear; ACTIVE=false ;;
         *) echo -e "${RED} Ivalid input${STD}" & sleep 1

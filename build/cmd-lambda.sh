@@ -1,8 +1,10 @@
 #!/bin/bash
 
-source setup.sh
+source setup.sh $1
 source aws-lib/lambda.sh
 source aws-lib/account.sh
+
+STAGE=$( get_stage )
 
 AWS_ACCOUNT_ID=$( get_account_id "Tech And Solve" )
 
@@ -26,14 +28,30 @@ update_proxy_function()
 create_proxy_function()
 {
     result=$( check_if_function_exists "${FUNCTION_NAME}" )
-    if [ "${result}" == "1" ]; then
-        warn_message "Function "${FUNCTION_NAME}" already exists."
-    else
+    if [ "${result}" == "" ]; then
         result=$( create_function "${FUNCTION_NAME}" "${FUNCTION_RUNTIME}" "${FUNCTION_ZIP_FILE}" "${FUNCTION_HANDLER}" "${FUNCTION_ROLE}" )
+        revision_id=$( echo ${result} | jq -r .RevisionId )
         if [ "${result}" == "" ]; then
-            info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}"."
+            info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}". [${revision_id}]."
         else
             error_message "Error creating function "${FUNCTION_NAME}" from file "${FUNCTION_ZIP_FILE}". ${result}"
         fi
+    else
+        warn_message "Function "${FUNCTION_NAME}" already exists."
+    fi
+}
+
+delete_proxy_function()
+{
+    result=$( check_if_function_exists "${FUNCTION_NAME}" )
+    if [ "${result}" == "1" ]; then
+        {
+            result=$( delete_function "${LAMDA_ROLE_NAME}" )
+            info_message "Function ${LAMDA_ROLE_NAME} deleted."
+        } || {
+            error_message "Error deleting function ${LAMDA_ROLE_NAME}.  ${result}"
+        }
+    else
+        warn_message "Function "${FUNCTION_NAME}" does NOT exist."
     fi
 }

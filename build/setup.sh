@@ -9,10 +9,24 @@ BASE_DIR=`pwd`
 OUTPUT_DIR="${BASE_DIR}/out"
 PACKAGE_DIR="${OUTPUT_DIR}/package"
 LAMBDA_ZIP_FILE="${PACKAGE_DIR}/package-lambda.zip"
-CLOUD_FORMATION_SCRIPTS_DIR="${BASE_DIR}/../cloudformation"
+BUILD_SCRIPTS_DIR="${BASE_DIR}/../build-scripts"
 
 LAMDA_ROLE_NAME="rxsurvey-lambda-role"
 LAMBDA_ROLE_POLICY_ARN="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
+STAGE=$1
+if [ "${STAGE}" == "" ]; then
+    STAGE="DEV"
+fi
+
+get_stage() 
+{
+    if [ "${STAGE}" == "" ]; then
+        echo -e "${RED}STAGE NOT CONFIGURED${STD}"
+        exit 1
+    fi
+    echo ${STAGE}
+}
 
 message()
 {

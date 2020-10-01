@@ -3,13 +3,10 @@
 check_if_function_exists()
 {
     function_name=$1
-    {
-        result=`aws lambda get-function --function-name ${function_name} 2>&1` &&
-        exit_status=1
-    } || {
-        exit_status=0
-    }
-    echo ${exit_status1}
+    result=`aws lambda list-functions`
+    function_information=$( { echo ${result} | jq -r ".Functions[] | select(.FunctionName == \"${function_name}\")" ; } 2>&1 )
+    function_arn=$( echo ${function_information} | jq -r .FunctionArn )
+    echo "${function_arn}"
 }
 
 create_function()
@@ -31,6 +28,22 @@ update_function_code()
     echo "${result}"
 }
 
+delete_function()
+{
+    function_name=$1
+    result=$( { aws lambda delete-function --function-name ${function_name} ; } 2>&1 )
+    echo "${result}"
+}
+
+add_env_variables_to_function()
+{
+    function_name=$1
+    env_variables_json_values=$2
+    env_variables_parameter="Variables=${env_variables_json_values}"
+    result=$( { aws lambda update-function-configuration --function-name ${function_name} --environment ${env_variables_parameter} ; } 2>&1 )
+    echo ${result}
+}
+
 test_create_function()
 {
     function_zip_file="fileb:///Users/raul.devilla/data/TECHANDSOLVE/projects/TechAndSolve/58_tech_assesment/rxsurvey-proxy-api/build/out/package/package-lambda.zip "
@@ -40,10 +53,10 @@ test_create_function()
 test_check_if_function_exists()
 {
     result=$( check_if_function_exists "rxsurvey-proxy" )
-    if [ "${result}" == "1" ]; then
-        echo "Function exists"
+    if [ "${result}" == "" ]; then
+        echo "Function don NOT exists"
     else
-        echo "Function NOT exists"
+        echo "Function exists"
     fi
 }
 
@@ -52,8 +65,20 @@ test_update_function_code()
     update_function_code "rxsurvey-proxy" "fileb:///Users/raul.devilla/data/TECHANDSOLVE/projects/TechAndSolve/58_tech_assesment/rxsurvey-proxy-api/build/out/package/package-lambda.zip"
 }
 
+test_delete_function()
+{
+    delete_function "rxsurvey-proxy"
+}
+
+test_add_env_variables_to_function()
+{
+    result=$( add_env_variables_to_function "rxsurvey-proxy" "{stage=DEV}" )
+    echo ${result}
+}
+
 #TEST
 #test_create_function
 #test_check_if_function_exists
-test_update_function_code
-
+#test_update_function_code
+#test_delete_function
+#test_add_env_variables_to_function
