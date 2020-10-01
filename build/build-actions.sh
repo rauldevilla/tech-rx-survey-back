@@ -95,7 +95,7 @@ show_options()
     echo "${APP_NAME} MENU OPTIONS"
     echo "-------------------------------"
     echo ""
-    echo "[[>> STAGE: \"${STAGE}\" <<]]"
+    echo -e "[[ STAGE: ${GREEN}${STAGE}${STD} ]]"
     echo ""
     echo " 1. Update function"
     echo " 2. Create IAM structure"
@@ -119,7 +119,7 @@ read_option()
          5) echo "" & delete_proxy_function ;;
         10) echo "" & show_config ;;
         99) clear; ACTIVE=false ;;
-        *) echo -e "${RED} Ivalid input${STD}" & sleep 1
+        *) echo -e "${RED}Ivalid input${STD}" & sleep 1
     esac
 }
 
