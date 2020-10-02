@@ -34,7 +34,7 @@ create_proxy_function()
         if [ "${result}" != "" ]; then
             info_message "Function "${FUNCTION_NAME}" creted using file "${FUNCTION_ZIP_FILE}". [${revision_id}]."
 
-            env_vars="{STAGE=${STAGE}}"
+            env_vars="{TABLE_SURVEY_NAME=${TABLE_SURVEY_NAME}}"
             result=$( add_env_variables_to_function "${FUNCTION_NAME}" "${env_vars}" )
             if [ result != "" ]; then
                 info_message "Environment variables ${env_vars} added to "${FUNCTION_NAME}""

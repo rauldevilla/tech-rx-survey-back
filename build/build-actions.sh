@@ -8,7 +8,9 @@ fi
 source setup.sh ${STAGE}
 source cmd-lambda.sh ${STAGE}
 source cmd-iam.sh ${STAGE}
+source cmd-dynamodb.sh ${STAGE}
 source package.sh ${STAGE}
+
 
 ACTIVE=true
 
@@ -54,6 +56,16 @@ create_iam_structure()
         create_dynamodb_policy
         attach_dynamodb_policy_to_lambda_role
     fi
+}
+
+create_tables() 
+{
+    create_survey_table
+}
+
+delete_tables()
+{
+    delete_survey_table
 }
 
 delete_iam_structure()
@@ -111,8 +123,10 @@ show_options()
     echo " 1. Update function"
     echo " 2. Create IAM structure"
     echo " 3. Create function"
-    echo " 4. Delete IAM structure"
-    echo " 5. Delete function"
+    echo " 4. Create DynamoDB Tables"
+    echo " 5. Delete IAM structure"
+    echo " 6. Delete function"
+    echo " 7. Delete DynamoDB Tables"
     echo "10. Show config"
     echo "99. Exit"
     echo ""
@@ -126,8 +140,10 @@ read_option()
          1) echo "" & package_and_update_function ;;
          2) echo "" & create_iam_structure ;;
          3) echo "" & package_and_create_function ;;
-         4) echo "" & delete_iam_structure ;;
-         5) echo "" & delete_proxy_function ;;
+         4) echo "" & create_tables ;;
+         5) echo "" & delete_iam_structure ;;
+         6) echo "" & delete_proxy_function ;;
+         7) echo "" & delete_tables ;;
         10) echo "" & show_config ;;
         99) clear; ACTIVE=false ;;
         *) echo -e "${RED}Ivalid input${STD}" & sleep 1

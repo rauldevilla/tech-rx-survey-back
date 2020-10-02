@@ -29,6 +29,8 @@ BUILD_SCRIPTS_DIR="${BASE_DIR}/../build-scripts"
 LAMDA_ROLE_NAME="rxsurvey-${STAGE}-lambda-role"
 LAMBDA_ROLE_POLICY_ARN="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 
+TABLE_SURVEY_NAME="rxsurvey-${STAGE}-survey"
+
 message()
 {
     option="$1"
