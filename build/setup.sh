@@ -1,20 +1,5 @@
 #!/bin/bash
 
-#COLORS
-RED='\033[0;41;30m'
-GREEN='\033[0;32m'
-STD='\033[0;0;39m'
-
-APP_NAME="RX-SURVEY"
-BASE_DIR=`pwd`
-OUTPUT_DIR="${BASE_DIR}/out"
-PACKAGE_DIR="${OUTPUT_DIR}/package"
-LAMBDA_ZIP_FILE="${PACKAGE_DIR}/package-lambda.zip"
-BUILD_SCRIPTS_DIR="${BASE_DIR}/../build-scripts"
-
-LAMDA_ROLE_NAME="rxsurvey-lambda-role"
-LAMBDA_ROLE_POLICY_ARN="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-
 STAGE=$1
 if [ "${STAGE}" == "" ]; then
     STAGE="DEV"
@@ -28,6 +13,21 @@ get_stage()
     fi
     echo ${STAGE}
 }
+
+#COLORS
+RED='\033[0;41;30m'
+GREEN='\033[0;32m'
+STD='\033[0;0;39m'
+
+APP_NAME="RX-SURVEY"
+BASE_DIR=`pwd`
+OUTPUT_DIR="${BASE_DIR}/out"
+PACKAGE_DIR="${OUTPUT_DIR}/package"
+LAMBDA_ZIP_FILE="${PACKAGE_DIR}/package-lambda.zip"
+BUILD_SCRIPTS_DIR="${BASE_DIR}/../build-scripts"
+
+LAMDA_ROLE_NAME="rxsurvey-${STAGE}-lambda-role"
+LAMBDA_ROLE_POLICY_ARN="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 
 message()
 {

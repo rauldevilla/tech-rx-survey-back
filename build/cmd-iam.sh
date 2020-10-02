@@ -4,12 +4,14 @@ source setup.sh
 source aws-lib/iam.sh
 source aws-lib/account.sh
 
+STAGE=$( get_stage )
+
 AWS_ACCOUNT_ID=$( get_account_id "Tech And Solve" )
 info_message "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
 
 LAMBDA_ROLE_TRUST_POLICY_FILE="file://${BUILD_SCRIPTS_DIR}/lambda-policy.json"
 DYNAMODB_POLICY_FILE="file://${BUILD_SCRIPTS_DIR}/dynamodb-policy.json"
-DYNAMODB_POLICY_NAME="rxsurvey-dynamodb-policy"
+DYNAMODB_POLICY_NAME="rxsurvey-${STAGE}-dynamodb-policy"
 DYNAMODB_POLICY_ARN="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/${DYNAMODB_POLICY_NAME}"
 
 

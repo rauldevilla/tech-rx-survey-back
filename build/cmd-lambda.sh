@@ -8,7 +8,7 @@ STAGE=$( get_stage )
 
 AWS_ACCOUNT_ID=$( get_account_id "Tech And Solve" )
 
-FUNCTION_NAME="rxsurvey-proxy"
+FUNCTION_NAME="rxsurvey-${STAGE}-proxy"
 FUNCTION_HANDLER="index.handler"
 FUNCTION_RUNTIME="nodejs12.x"
 FUNCTION_ZIP_FILE="fileb://${BASE_DIR}/out/package/package-lambda.zip"
